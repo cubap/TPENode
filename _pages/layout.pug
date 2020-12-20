@@ -1,0 +1,30 @@
+//- layout.pug
+doctype html
+head
+    block head
+        meta(http-equiv='Content-Type' content='text/html; charset=UTF-8')
+        meta(property='og:title' content='TPEN')
+        meta(property='og:description' content='Transcription for paleographical and editorial \
+        notation')
+        meta(property='og:type' content='website')
+        meta(property='og:url' content='http://www.t-pen.org')
+        meta(property='og:site_name' content='T‑PEN')
+        meta(property='fb:admins' content='155508371151230')
+        meta(itemprop='name' content='T‑PEN')
+        meta(itemprop='description' content='Digital tool for transcription')
+        meta(itemprop='image' content='https://lh3.googleusercontent.com/-TysT8pvMcgI/AAAAAAAAAAI/AAAAAAAAADI/PWEsFECiPwE/s250-c-k/photo.jpg')
+        title #{title} | TPEN Version 3.0
+        link(rel='shortcut icon' type='image/x-icon' href='favicon.ico')
+        style(src='tpen.css')
+body
+    block content
+    block foot
+        noscript
+            | You are blocking scripts on this page. TPEN uses 
+            code googleapis.com
+            |  and 
+            code t-pen.org
+            |     for necessary functionality.
+        #trexHead
+    block scripts
+        script(src='js/tpen.js' type='text/javascript')
