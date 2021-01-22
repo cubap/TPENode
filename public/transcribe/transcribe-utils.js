@@ -9,7 +9,7 @@ if (nextLineButtons.length) {
 }
 
 function navigateBackOneLine(event) {
-    navigateToLine("line","last",event.target)
+    navigateToLine("line","previous",event.target)
 }
 
 function navigateForwardOneLine(event) {

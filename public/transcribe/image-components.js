@@ -136,11 +136,20 @@ class RrViewbox extends HTMLElement {
                 })
                 .then(manifest => {
                     this.presentation.manifest = manifest
-                    this.presentation.canvas = manifest.sequences[0].canvases[0]
+                    this.presentation.canvas = findCanvas(this.canvas)
                     this.src = this.presentation.canvas.images[0].resource['@id']
                     loadImage()
                 })
         }
+        const findCanvas = id => {
+            if (typeof id === "string") {
+                for (const c of this.presentation.manifest.sequences[0].canvases) {
+                    if(c['@id'] === id) return c
+                }
+            } else {
+                return this.presentation.manifest.sequences[0].canvases[0]
+            }
+        } 
         const navigateHandler = event => {
             const toNextLineId = (el) => {
                 const c = this.presentation.canvas
