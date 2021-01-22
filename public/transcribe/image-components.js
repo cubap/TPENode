@@ -24,6 +24,13 @@ class RrViewbox extends HTMLElement {
             ? this.line || this.closest('[rr-line]').getAttribute("rr-line")
             : ""
     }
+    setLine(id) {
+        this.line = id
+        this.setAttribute('rr-line', id)
+    }
+    static get observedAttributes() {
+        return ['rr-manifest', 'rr-canvas', 'rr-line', 'rr-selector'];
+    }
     constructor() {
         super()
 
@@ -157,7 +164,7 @@ class RrViewbox extends HTMLElement {
                 if (typeof id !== "string") {
                     throw Error("This is not an id or uri that I recognize:", id)
                 }
-                el.setAttribute('rr-line', id)
+                this.setLine(id)
             }
             const goto = event.detail.goto
             switch (goto.type) {
