@@ -24,5 +24,8 @@
         "mongoose": "^5.11.8",
         "openseadragon": "^2.4.2",
         "pug": "^3.0.0"
+    },
+    "scripts": {
+        "start": "node main.js"
     }
 }
