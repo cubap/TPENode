@@ -3,6 +3,11 @@
  * @author cubap
  */
 
+import {
+    navigateForwardOneLine,
+    navigateBackOneLine
+} from './transcribe-utils.js'
+
 class RrViewbox extends HTMLElement {
     getManifest() {
         return (this.manifest || this.closest('[rr-manifest]'))
@@ -136,20 +141,11 @@ class RrViewbox extends HTMLElement {
                 })
                 .then(manifest => {
                     this.presentation.manifest = manifest
-                    this.presentation.canvas = findCanvas(this.canvas)
+                    this.presentation.canvas = findCanvas(this.presentation.manifest.sequences[0].canvases, this.canvas)
                     this.src = this.presentation.canvas.images[0].resource['@id']
                     loadImage()
                 })
         }
-        const findCanvas = id => {
-            if (typeof id === "string") {
-                for (const c of this.presentation.manifest.sequences[0].canvases) {
-                    if(c['@id'] === id) return c
-                }
-            } else {
-                return this.presentation.manifest.sequences[0].canvases[0]
-            }
-        } 
         const navigateHandler = event => {
             const toNextLineId = (el) => {
                 const c = this.presentation.canvas
@@ -257,6 +253,13 @@ class RrWorkspace extends HTMLElement {
             ? this.line || this.closest('[rr-line]').getAttribute("rr-line")
             : ""
     }
+    setText(text) {
+        this.text = text
+        this.getElementsByTagName("textarea").innerText = this.text
+    }
+    static get observedAttributes() {
+        return ['rr-manifest', 'rr-canvas', 'rr-line'];
+    }
     constructor() {
         super()
 
@@ -272,9 +275,9 @@ class RrWorkspace extends HTMLElement {
 
         this.addEventListener("scrolltoline", this.viewLine)
 
-        const shadowStyle = document.createElement("style")
-        shadowStyle.textContent = `
-        workspace {
+        const headStyle = document.createElement("style")
+        headStyle.textContent = `
+        rr-workspace {
             display: block;
             background-color: #ffffff;
             width: 100vw;
@@ -282,9 +285,10 @@ class RrWorkspace extends HTMLElement {
             box-shadow: 0 0 1em rgba(0,0,0,.5);
             z-index: 5;
         }`
-        this.shadowRoot.appendChild(shadowStyle)
+        document.head.appendChild(headStyle)
         const transcriptlet = document.createElement("textarea")
         transcriptlet.value = this.text
+        this.shadowRoot.appendChild(transcriptlet)
     }
     connectedCallback() {
 
@@ -301,20 +305,31 @@ class RrWorkspace extends HTMLElement {
                 })
                 .then(manifest => {
                     this.presentation.manifest = manifest
-                    this.presentation.canvas = this.getCanvas() || manifest.sequences[0].canvases[0]
+                    this.presentation.canvas = findCanvas(this.presentation.manifest.sequences[0].canvases, this.canvas)
                     this.text = this.presentation.canvas.otherContent[0].resources[0].resource['cnt:chars']
+                    this.getElementsByTagName("textarea")[0].innerText = this.text
                 })
         }
-        const bkBtn = document.createElement("button")
-        const fwdBtn = document.createElement("button")
-        [bkBtn, fwdBtn].forEach(b => b.setAttribute("role", "button"))
-        bkBtn.addEventListener("click")
-        this.shadowRoot.append(bkBtn, fwdBtn)
+        const buttons = `        
+            <button role="button" class="selectPreviousLine">⬆</button>
+            <button role="button" class="selectNextLine">⬇</button>
+    `
+        this.shadowRoot.lastElementChild.insertAdjacentHTML('afterend', buttons)
+        const prevLineButtons = document.getElementsByClassName("selectPreviousLine")
+        const nextLineButtons = document.getElementsByClassName("selectNextLine")
+
+        if (prevLineButtons.length) {
+            Array.from(prevLineButtons).forEach(el => el.addEventListener("click", navigateBackOneLine))
+        }
+        if (nextLineButtons.length) {
+            Array.from(nextLineButtons).forEach(el => el.addEventListener("click", navigateForwardOneLine))
+        }
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "rr-line" && (oldValue !== newValue)) {
             const newLocal = "scrolltoline"
             this.dispatchEvent(new CustomEvent(newLocal, { detail: { line: newValue } }))
+            this.setText(this.presentation.canvas.otherContent[0].resources[0].resource['cnt:chars'])
         }
     }
 
@@ -346,3 +361,13 @@ class RrWorkspace extends HTMLElement {
 
 customElements.define("rr-workspace", RrWorkspace)
 
+// helpers
+const findCanvas = (canvases, id) => {
+    if (typeof id === "string") {
+        for (const c of canvases) {
+            if (c['@id'] === id) return c
+        }
+    } else {
+        return canvases[0]
+    }
+} 

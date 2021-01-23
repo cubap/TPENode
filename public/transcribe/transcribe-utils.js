@@ -28,3 +28,8 @@ function navigateToLine(type,line,el=document) {
     })
     el.dispatchEvent(NavigateEvent)
 }
+
+export {
+    navigateForwardOneLine,
+    navigateBackOneLine
+}
