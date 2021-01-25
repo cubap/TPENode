@@ -11,7 +11,9 @@ if (envFound.error) {
   config = {
     api: {
       prefix: '/api',
-    }
+      jwtSecret: process.env.JWT_SECRET,
+      jwtAlgorithm: process.env.JWT_ALGO
+      }
   }
 } else {
   config = {
