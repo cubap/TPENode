@@ -286,9 +286,12 @@ class RrWorkspace extends HTMLElement {
             z-index: 5;
         }`
         document.head.appendChild(headStyle)
-        const transcriptlet = document.createElement("textarea")
-        transcriptlet.value = this.text
-        this.shadowRoot.appendChild(transcriptlet)
+        const transcriptlet = `<textarea>${this.text}</textarea>`
+        const buttons = `        
+        <button role="button" class="selectPreviousLine">⬆</button>
+        <button role="button" class="selectNextLine">⬇</button>
+        `
+        this.shadowRoot.innerHTML = transcriptlet + buttons
     }
     connectedCallback() {
 
@@ -310,20 +313,15 @@ class RrWorkspace extends HTMLElement {
                     this.getElementsByTagName("textarea")[0].innerText = this.text
                 })
         }
-        const buttons = `        
-            <button role="button" class="selectPreviousLine">⬆</button>
-            <button role="button" class="selectNextLine">⬇</button>
-    `
-        this.shadowRoot.lastElementChild.insertAdjacentHTML('afterend', buttons)
-        const prevLineButtons = document.getElementsByClassName("selectPreviousLine")
-        const nextLineButtons = document.getElementsByClassName("selectNextLine")
-
-        if (prevLineButtons.length) {
-            Array.from(prevLineButtons).forEach(el => el.addEventListener("click", navigateBackOneLine))
-        }
-        if (nextLineButtons.length) {
-            Array.from(nextLineButtons).forEach(el => el.addEventListener("click", navigateForwardOneLine))
-        }
+        this.shadowRoot.addEventListener("click", event => {
+            const buttons = event.target.classList
+            if (buttons.contains('selectPreviousLine')) {
+                navigateBackOneLine(event, this)
+            } else if (buttons.contains('selectNextLine')) {
+                navigateForwardOneLine(event, this)
+            }
+            return event
+        })
     }
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "rr-line" && (oldValue !== newValue)) {
