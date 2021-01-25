@@ -17,8 +17,8 @@ const getTokenFromHeader = req => {
 }
 
 const isAuth = jwt({
-  secret: config.jwtSecret, // The _secret_ to sign the JWTs
-  algorithms: [config.jwtAlgorithm], // JWT Algorithm
+  secret: config.jwtSecret || "forceWorkingAnyway", // The _secret_ to sign the JWTs
+  algorithms: [config.jwtAlgorithm || 'HMAC'], // JWT Algorithm
   userProperty: 'token', // Use req.token to store the JWT
   getToken: getTokenFromHeader, // How to extract the JWT from the request
 })
