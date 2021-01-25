@@ -3,9 +3,9 @@ import app from './express.js'
 
 async function startServer(port) {
   
-    app.listen(process.env.port || config.port || 666, () => {
+    app.listen(port, () => {
         console.log(`Example app listening at http://localhost:${port}`)
     })
 }
 
-startServer(config.port)
+startServer(process.env.port || config.port || 666)
