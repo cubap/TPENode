@@ -76,7 +76,7 @@ export default class AuthService {
                 name: user.name,
                 exp: exp.getTime() / 1000,
             },
-            config.jwtSecret
+            config.jwtSecret || "forceWorkingAnyway"
         )
     }
 }
