@@ -8,4 +8,4 @@ async function startServer(port) {
     })
 }
 
-startServer(process.env.port || config.port || 666)
+startServer(process.env.PORT || config.port || 666)
