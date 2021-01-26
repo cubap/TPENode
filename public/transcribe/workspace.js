@@ -73,6 +73,19 @@ class RrWorkspace extends HTMLElement {
             }
             return event
         })
+        this.shadowRoot.addEventListener("keydown",event=>{
+            if(event.target.tagName==="TEXTAREA"){
+                if(event.key === "Tab"){
+                    event.preventDefault()
+                    if(event.shiftKey) { // backup
+                        navigateBackOneLine(event, this)
+                    } else {
+                        navigateForwardOneLine(event, this)
+                    }
+                }
+            }
+            return event
+        })
     }
     connectedCallback() { return }
     attributeChangedCallback(name, oldValue, newValue) { return }
