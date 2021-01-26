@@ -8,13 +8,16 @@
         href="https://cdn.jsdelivr.net/npm/@recogito/annotorious-openseadragon@2.1.0/dist/annotorious.min.css">
 </head>
 
-<body class="transcription" rr-line="http://t-pen.org/TPEN/line/104692228" rr-canvas="http://t-pen.org/TPEN/canvas/105421" rr-manifest="http://t-pen.org/TPEN/manifest/4080/manifest.json">
-    <rr-viewbox></rr-viewbox>
-    <!-- <osd class="deer-view" deer-template="selected" deer-id="http://t-pen.org/TPEN/manifest/7066/manifest.json">osd</osd> -->
-    <rr-workspace>
-        <span>transcription workspace</span>
-    </rr-workspace>
-    <rr-viewbox rr-show="below"></rr-viewbox>
+<body class="transcription">
+    <rr-transcriber rr-canvas="http://t-pen.org/TPEN/canvas/105421" rr-manifest="http://t-pen.org/TPEN/manifest/4080/manifest.json">
+        <rr-viewbox rr-show="self"></rr-viewbox>
+        <!-- <osd class="deer-view" deer-template="selected" deer-id="http://t-pen.org/TPEN/manifest/7066/manifest.json">osd</osd> -->
+        <rr-workspace>
+            <span>transcription workspace</span>
+        </rr-workspace>
+        <rr-viewbox rr-show="below"></rr-viewbox>
+        <rr-info></rr-info>
+    </rr-transcriber>
     <script src="/tpen.js"></script>
     <!-- <script src="/deer.js" type="module"></script> -->
     <!-- <script src="transcribe-utils.js"></script> -->
