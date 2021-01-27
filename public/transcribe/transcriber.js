@@ -44,8 +44,8 @@ class RrTranscriber extends HTMLElement {
             }
 
             const toSibling = (collection, current, direction) => {
-                if(typeof current === "string") {
-                    current = collection.find(i=>i['@id']===current)
+                if (typeof current === "string") {
+                    current = collection.find(i => i['@id'] === current)
                 }
                 const sib = collection[collection.findIndex(i => Object.is(i, current)) + direction]
                 if (sib && sib['@id']) {
@@ -84,7 +84,17 @@ class RrTranscriber extends HTMLElement {
                     break
             }
         }
+        /**
+         * Accept user change to line text and update the corresponding line Annotation in the 
+         * Canvas held in memory. The reference is preserved, no need to go find this.canvas.
+         * @param {change} event input Textarea changed
+         */
+        function updateLine(event) {
+            event.detail.line.resource['cnt:chars'] = event.detail.text;
+            return event;
+        }
         this.addEventListener("navigate", navigateHandler)
+        this.addEventListener("changelinetext", updateLine)
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

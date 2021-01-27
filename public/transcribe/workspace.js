@@ -11,7 +11,7 @@ import {
 class RrWorkspace extends HTMLElement {
     setText(text) {
         this.text = text
-        this.shadowRoot.querySelector("textarea").innerText = this.text
+        this.shadowRoot.querySelector("textarea").value = this.text
     }
     static get observedAttributes() {
         return ['rr-canvas', 'rr-line', 'rr-selection'];
@@ -25,17 +25,18 @@ class RrWorkspace extends HTMLElement {
 
         document.addEventListener("showline", event => {
             this.setText(event.detail.line.resource['cnt:chars'])
+            this.line = event.detail.line
             this.lineReceived = true
-            setTimeout(()=>delete this.lineReceived,1000)
+            setTimeout(() => delete this.lineReceived, 1000)
         })
         document.addEventListener("showcanvas", event => {
-            setTimeout(()=>{
-                if(!this.lineReceived){
+            setTimeout(() => {
+                if (!this.lineReceived) {
                     this.setText(event.detail.canvas.otherContent[0].resources[0].resource['cnt:chars'])
                 }
             }, 200)
         })
-        
+
         const headStyle = document.createElement("style")
         headStyle.textContent = `
         rr-workspace {
@@ -73,16 +74,25 @@ class RrWorkspace extends HTMLElement {
             }
             return event
         })
-        this.shadowRoot.addEventListener("keydown",event=>{
-            if(event.target.tagName==="TEXTAREA"){
-                if(event.key === "Tab"){
+        this.shadowRoot.addEventListener("keydown", event => {
+            if (event.target.tagName === "TEXTAREA") {
+                if (event.key === "Tab") {
+                    if (event.target.value !== this.text) {
+                        this.dispatchEvent(new CustomEvent("changelinetext", { bubbles: true, detail: { text: event.target.value, line: this.line } }))
+                    }
                     event.preventDefault()
-                    if(event.shiftKey) { // backup
+                    if (event.shiftKey) { // backup
                         navigateBackOneLine(event, this)
                     } else {
                         navigateForwardOneLine(event, this)
                     }
                 }
+            }
+            return event
+        })
+        this.shadowRoot.addEventListener("change", event => {
+            if (event.target.tagName === "TEXTAREA" && (event.target.value !== this.text)) {
+                this.dispatchEvent(new CustomEvent("changelinetext", { bubbles: true, detail: { text: event.target.value, line: this.line } }))
             }
             return event
         })
