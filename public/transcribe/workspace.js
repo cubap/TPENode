@@ -11,7 +11,10 @@ import {
 class RrWorkspace extends HTMLElement {
     setText(text) {
         this.text = text
-        this.shadowRoot.querySelector("textarea").value = this.text
+        const TAREA = this.shadowRoot.querySelector("textarea")
+        TAREA.classList.add("quick-fade")
+        TAREA.value = this.text
+        TAREA.classList.remove("quick-fade")
     }
     static get observedAttributes() {
         return ['rr-canvas', 'rr-line', 'rr-selection'];
@@ -52,6 +55,12 @@ class RrWorkspace extends HTMLElement {
         shadowStyle.textContent = `
         textarea {
             flex-grow: 1;
+            transition: opacity .5s;
+            opacity: 1;
+        }
+        .quick-fade {
+            transition: none;
+            opacity: 0;
         }`
 
         document.head.appendChild(headStyle)
