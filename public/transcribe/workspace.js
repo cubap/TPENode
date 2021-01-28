@@ -27,7 +27,7 @@ class RrWorkspace extends HTMLElement {
         this.bufferPixels = 15
 
         document.addEventListener("showline", event => {
-            this.setText(event.detail.line.resource['cnt:chars'])
+            this.setText(event.detail.line.resource['cnt:chars']||event.detail.line.resource.chars||event.detail.line.resource.value)
             this.line = event.detail.line
             this.lineReceived = true
             setTimeout(() => delete this.lineReceived, 1000)

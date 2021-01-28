@@ -71,7 +71,7 @@ async function resolveResource(r, refetch) {
         case "object":
             if (Array.isArray(r)) { return r.map(i => resolveResource(i, refetch)) }
             if (!id || !refetch) { return r }
-            continue // to fetch
+            // continue to fetch
         case "string":
             return await fetch(id || r)
                 .then(response => response.ok ? response.json() : Error("Failed to fetch"))
