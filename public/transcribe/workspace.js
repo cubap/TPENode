@@ -35,7 +35,11 @@ class RrWorkspace extends HTMLElement {
         document.addEventListener("showcanvas", event => {
             setTimeout(() => {
                 if (!this.lineReceived) {
-                    this.setText(event.detail.canvas.otherContent[0].resources[0].resource['cnt:chars'])
+                    try {
+                        this.setText(event.detail.canvas.otherContent[0].resources[0].resource['cnt:chars'])
+                    } catch {
+                        this.dispatchEvent(new ErrorEvent("Annotations are missing."))
+                    }
                 }
             }, 200)
         })

@@ -51,12 +51,37 @@ function findLine(lines, id) {
     }
 }
 
-function getLabel(obj, fallback=""){
+function getLabel(obj, fallback = "") {
     let label = obj.label || obj.title || obj.name || String(fallback)
-    if(typeof label === "string") { return label }
+    if (typeof label === "string") { return label }
     label = [].concat(...(label.none || label.en || Object.keys(label)[0])).join("")
-    if(typeof label === "string") { return label }
+    if (typeof label === "string") { return label }
     return fallback
+}
+
+/**
+ * Accept an id/uri of an Internet resource and return complete
+ * object, if available.
+ * @param {String, Object} r thing to be resolved
+ * @param {Boolean} refetch true to check for updates
+ */
+async function resolveResource(r, refetch) {
+    const id = r['@id'] || r.id
+    switch (typeof r) {
+        case "object":
+            if (Array.isArray(r)) { return r.map(i => resolveResource(i, refetch)) }
+            if (!id || !refetch) { return r }
+            continue // to fetch
+        case "string":
+            return await fetch(id || r)
+                .then(response => response.ok ? response.json() : Error("Failed to fetch"))
+                .catch(err => {
+                    console.error(err)
+                    return r
+                })
+        default:
+            return r
+    }
 }
 
 export {
@@ -65,5 +90,6 @@ export {
     navigateToLine,
     findCanvas,
     findLine,
-    getLabel
+    getLabel,
+    resolveResource
 }

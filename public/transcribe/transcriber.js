@@ -30,7 +30,7 @@ class RrTranscriber extends HTMLElement {
         `
         document.head.appendChild(headStyle)
 
-        const navigateHandler = event => {
+        async function navigateHandler (event) {
             if (!this.manifest) {
                 throw new Error("There is no Manifest. Unable to navigate.")
             }
@@ -38,7 +38,12 @@ class RrTranscriber extends HTMLElement {
             if (!this.canvas) {
                 this.canvas = findCanvas(canvases)
             }
-            const lines = this.canvas.otherContent[0].resources
+            let lines = this.canvas.otherContent[0].resources
+            if(!lines && this.canvas.otherContent[0]){
+                this.canvas.otherContent[0] = await resolveResource(this.canvas.otherContent[0],true)
+                lines = this.canvas.otherContent[0].resources
+            }
+
             if (!this.line) {
                 this.line = findLine(lines)
             }
@@ -95,6 +100,7 @@ class RrTranscriber extends HTMLElement {
         }
         this.addEventListener("navigate", navigateHandler)
         this.addEventListener("changelinetext", updateLine)
+        this.addEventListener("changemanifest",event=>this.setAttribute("rr-manifest",event.detail.manifest))
     }
 
     attributeChangedCallback(name, oldValue, newValue) {

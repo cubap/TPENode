@@ -3,10 +3,11 @@
  * @author cubap
  */
 
-import { 
+import {
     getLabel,
-    navigateToLine
- } from "./transcribe-utils.js";
+    navigateToLine,
+    resolveResource
+} from "./transcribe-utils.js";
 
 class RrInfo extends HTMLElement {
     constructor() {
@@ -16,11 +17,11 @@ class RrInfo extends HTMLElement {
 
         document.addEventListener("showline", event => {
             this.line = event.detail.line
-            this.shadowRoot.querySelector(".line-label").innerHTML = getLabel(this.line,"")
+            this.shadowRoot.querySelector(".line-label").innerHTML = getLabel(this.line, "")
             const lines = this.shadowRoot.querySelectorAll(".line-select option")
-            lines.forEach(el=>{
-                if(el.value===this.line['@id']) {
-                    el.setAttribute("selected",true)
+            lines.forEach(el => {
+                if (el.value === this.line['@id']) {
+                    el.setAttribute("selected", true)
                 } else {
                     el.removeAttribute("selected")
                 }
@@ -28,13 +29,22 @@ class RrInfo extends HTMLElement {
         })
         document.addEventListener("showcanvas", event => {
             this.canvas = event.detail.canvas
-            this.shadowRoot.querySelector(".canvas-label").innerHTML = getLabel(this.canvas,"")
-            this.shadowRoot.querySelector(".line-select").innerHTML = 
-                this.canvas.otherContent[0].resources.reduce((a,b,i)=>a+=`<option value="${b['@id']}">${getLabel(b,i+1)}</option>`,``)
+            this.shadowRoot.querySelector(".canvas-label").innerHTML = getLabel(this.canvas, "")
+            if (this.canvas.otherContent[0] && !this.canvas.otherContent[0].resources) {
+                resolveResource(this.canvas.otherContent[0], true)
+                    .then(list => {
+                        this.canvas.otherContent[0] = list
+                        this.shadowRoot.querySelector(".line-select").innerHTML =
+                            this.canvas.otherContent[0].resources.reduce((a, b, i) => a += `<option value="${b['@id']}">${getLabel(b, i + 1)}</option>`, ``)
+                    })
+            } else {
+                this.shadowRoot.querySelector(".line-select").innerHTML =
+                    this.canvas.otherContent[0].resources.reduce((a, b, i) => a += `<option value="${b['@id']}">${getLabel(b, i + 1)}</option>`, ``)
+            }
             const canvases = this.shadowRoot.querySelectorAll(".canvas-select option")
-            canvases.forEach(el=>{
-                if(el.value===this.canvas['@id']) {
-                    el.setAttribute("selected",true)
+            canvases.forEach(el => {
+                if (el.value === this.canvas['@id']) {
+                    el.setAttribute("selected", true)
                 } else {
                     el.removeAttribute("selected")
                 }
@@ -42,11 +52,11 @@ class RrInfo extends HTMLElement {
         })
         document.addEventListener("loadedmanifest", event => {
             this.manifest = event.detail.manifest
-            this.shadowRoot.querySelector(".manifest-label").innerHTML = getLabel(this.manifest,"")
-            this.shadowRoot.querySelector(".canvas-select").innerHTML = 
-                this.manifest.sequences[0].canvases.reduce((a,b,i)=>a+=`<option value="${b['@id']}">${getLabel(b,i+1)}</option>`,``)
+            this.shadowRoot.querySelector(".manifest-label").innerHTML = getLabel(this.manifest, "")
+            this.shadowRoot.querySelector(".canvas-select").innerHTML =
+                this.manifest.sequences[0].canvases.reduce((a, b, i) => a += `<option value="${b['@id']}">${getLabel(b, i + 1)}</option>`, ``)
         })
-        
+
         const headStyle = document.createElement("style")
         headStyle.textContent = `
         rr-info {
@@ -75,9 +85,9 @@ class RrInfo extends HTMLElement {
         this.shadowRoot.appendChild(shadowStyle)
 
         this.shadowRoot.addEventListener("input", event => {
-            if(event.target.classList.contains("line-select")||event.target.classList.contains("canvas-select")){
+            if (event.target.classList.contains("line-select") || event.target.classList.contains("canvas-select")) {
                 const type = event.target.classList.contains("line-select") ? "line" : "canvas"
-                navigateToLine(type,event.target.value,this)
+                navigateToLine(type, event.target.value, this)
             }
             return event
         })
