@@ -95,7 +95,7 @@ class RrTranscriber extends HTMLElement {
          * @param {change} event input Textarea changed
          */
         function updateLine(event) {
-            event.detail.line.resource['cnt:chars'] = event.detail.text;
+            event.detail.line.resource['cnt:chars'] = event.detail.text || "";
             return event;
         }
         this.addEventListener("navigate", navigateHandler)
