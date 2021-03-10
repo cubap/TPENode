@@ -25,6 +25,10 @@ class RrViewbox extends HTMLElement {
         imgFrame.style.left = `-${x / selectorToPage}px`
         if (this.show === "self") {
             this.style.height = `${h * viewportWidth / w}px`
+            if (this.src.includes("full/full/"){
+                let pct = `pct:${x/this.canvas.width},${y/this.canvas.height},${w/this.canvas.width},${h/this.canvas.height}`
+                document.querySelector('.bookmark').style = `background:bottom 0px left 0px / cover url(${this.src.replace("full/full",pct+"/full")});`
+            }
         }
     }
     constructor() {
