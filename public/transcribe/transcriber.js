@@ -103,6 +103,20 @@ class RrTranscriber extends HTMLElement {
         this.addEventListener("changemanifest",event=>this.setAttribute("rr-manifest",event.detail.manifest))
     }
 
+    connectedCallback() {
+        const params = new URLSearchParams(document.location.search)
+        const uri = params.get("uri")
+        const line = params.get("line")
+        const canvas = params.get("canvas")
+        const manifest = params.get("manifest")
+        if (uri) {
+            console.warn("URI is not checked yet, please use 'manifest', 'canvas', 'line'.")
+        }
+        if (line) { this.setAttribute("rr-line",line) }
+        if (canvas) { this.setAttribute("rr-canvas",canvas) }
+        if (manifest) { this.setAttribute("rr-manifest",manifest) }
+    }
+
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === "rr-manifest" && (oldValue !== newValue)) {
             fetch(newValue)
