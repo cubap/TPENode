@@ -29,8 +29,8 @@ class RrViewbox extends HTMLElement {
             if (src.includes("full/full/")){
                 let bookmark = this.shadowRoot.querySelector('.bookmark') || {}
                 bookmark.style = ""
-                let pct = `pct:${100*x/this.canvas.width},${100*y/this.canvas.height},${100*w/this.canvas.width},${100*h/this.canvas.height}/${bookmark.width},`
-                setTimeout(()=>bookmark.style = `background:bottom 0px left 0px / url(${src.replace("full/full",pct+"/full")});`,500)
+                let pct = `pct:${100*x/this.canvas.width},${100*y/this.canvas.height},${100*w/this.canvas.width},${100*h/this.canvas.height}`
+                setTimeout(()=>bookmark.style = `background-image:url(${src.replace("full/full",pct+"/full")});`,500)
             }
         }
     }
@@ -88,6 +88,9 @@ class RrViewbox extends HTMLElement {
             border-radius: ${this.bufferPixels / 3}px;
             opacity: 1 !important;
             box-shadow: 0 0 0 1px #a64129, 0 0 ${this.bufferPixels / 3}px black;
+            background-size: calc(100% + 31px);
+            background-position: 0px -1px;
+            background-repeat: no-repeat;
         }`
         this.shadowRoot.appendChild(shadowStyle)
         document.head.appendChild(headStyle)
